@@ -76,7 +76,7 @@ input[type=range]{accent-color:var(--a);width:100%;max-width:420px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px}
 .st{background:var(--p);border-radius:16px;padding:18px;border:1px solid #ffffff10}.st b{font-size:30px;display:block;background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}.st span{color:var(--m);font-size:13px}
 .panel{background:var(--p);border-radius:18px;padding:20px;margin-bottom:20px}
-.row{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff0d}.row .cv{width:44px;height:44px;font-size:16px;flex:none}.row div:nth-child(2){flex:1;min-width:0}$('#admask').onclick=()=>{$('#admask').onclick=()=>{$('#admask').onclick=()
+.row{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff0d}.row .cv{width:44px;height:44px;font-size:16px;flex:none}.row div:nth-child(2){flex:1;min-width:0}
 .fl{display:grid;grid-template-columns:1fr 1fr;gap:12px}.fl label{font-size:12px;color:var(--m);display:flex;flex-direction:column;gap:5px}
 input[type=file]{background:var(--p2);padding:9px;border-radius:10px;width:100%;font-size:13px}
 .modal{position:fixed;inset:0;background:#000b;z-index:500;display:grid;place-items:center;padding:16px;animation:fi .2s}
@@ -86,6 +86,7 @@ input[type=file]{background:var(--p2);padding:9px;border-radius:10px;width:100%;
 .toast{background:var(--p2);border:1px solid #a855f777;border-left:4px solid var(--a);padding:14px 20px;border-radius:14px;box-shadow:0 10px 40px #000a;animation:ti .5s cubic-bezier(.2,1.3,.4,1)}
 @keyframes ti{from{transform:translateX(120%)}}
 @media(max-width:700px){#app{grid-template-columns:1fr;grid-template-rows:56px 1fr 84px}.side{flex-direction:row;overflow-x:auto;padding:8px;grid-row:1}.side .name,.side h4,#pls{display:none}.pbar{grid-column:1;gap:10px;padding:0 10px}.pi{width:110px}.vol{display:none}main{padding:0 14px 14px}.fl{grid-template-columns:1fr}}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}input,textarea{-webkit-user-select:text;user-select:text}img,.cv{-webkit-user-drag:none}
 </style></head><body>
 <div id="cd"></div><div id="cr"></div><div id="toasts"></div>
 
@@ -115,6 +116,12 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const ADMIN_PASS="admin2026";
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ls={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+// protection
+const isIn=e=>e.target&&e.target.closest&&e.target.closest('input,textarea');
+['contextmenu','dragstart'].forEach(n=>document.addEventListener(n,e=>e.preventDefault()));
+['copy','cut','selectstart'].forEach(n=>document.addEventListener(n,e=>{if(!isIn(e))e.preventDefault()}));
+document.addEventListener('keydown',e=>{const k=e.key.toLowerCase(),c=e.ctrlKey||e.metaKey;
+if(e.key=='F12'||(c&&['u','s','p'].includes(k))||(c&&e.shiftKey&&['i','j','c','k'].includes(k))||(c&&!isIn(e)&&['c','x','a'].includes(k)))e.preventDefault()},true);
 // cursor
 let mx=0,my=0,rx=0,ry=0;addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;$('#cd').style.left=mx+'px';$('#cd').style.top=my+'px'});
 (function l(){rx+=(mx-rx)*.18;ry+=(my-ry)*.18;$('#cr').style.left=rx+'px';$('#cr').style.top=ry+'px';requestAnimationFrame(l)})();
@@ -151,8 +158,8 @@ function modal(h,f){const m=document.createElement('div');m.className='modal';m.
 function addTo(id){const a=gp().filter(p=>p.o==user.em);if(!a.length)return toast('Crée d’abord une playlist (+)');modal(`<h3>Ajouter à…</h3><br>`+a.map(p=>`<button class="nav" style="width:100%" data-i="${p.id}">🎶 ${esc(p.n)}</button>`).join(''),m=>m.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const all=gp(),p=all.find(x=>x.id==b.dataset.i);if(!p.t.includes(id))p.t.push(id);ls.set('w_pl',all);m.remove();toast('Ajouté ✔')}))}
 // views
 $$('.nav[data-v]').forEach(b=>b.onclick=()=>go(b.dataset.v));
-$('#admask').onclick=()=>{if(adminOK)return go('admin');modal(`<h3>🔐 Panel admin</h3><br><input type="password" id="ap" placeholder="Mot de passe admin"><div class="err" id="ae"></div><button class="btn" style="width:100%" id="aok">Entrer</button>`,m=>{const f=()=>{if(m.querySelector('#ap').value===ADMIN_PASS){adminOK=true;m.remove();$('#admask').classList.add('hide');$('#admbtn').classList.remove('hide');go('admin');toast('Accès admin accordé ✔')}else m.querySelector('#ae').textContent='Mot de passe incorrect'};m.querySelector('#aok').onclick=f;m.querySelector('#ap').onkeydown=e=>e.key=='Enter'&&f()})};
-$('#q').oninput=()=>go('search');
+const askAdmin=()=>{if(adminOK)return go('admin');modal(`<h3>🔐 Panel admin</h3><br><input type="password" id="ap" placeholder="Mot de passe admin"><div class="err" id="ae"></div><button class="btn" style="width:100%" id="aok">Entrer</button>`,m=>{const f=()=>{if(m.querySelector('#ap').value===ADMIN_PASS){adminOK=true;m.remove();$('#admask').classList.add('hide');$('#admbtn').classList.remove('hide');go('admin');toast('Accès admin accordé ✔')}else m.querySelector('#ae').textContent='Mot de passe incorrect'};m.querySelector('#aok').onclick=f;m.querySelector('#ap').onkeydown=e=>{if(e.key=='Enter')f()}})};
+let lc=0,lt;$('#uav').onclick=()=>{lc++;clearTimeout(lt);lt=setTimeout(()=>lc=0,1500);if(lc>=5){lc=0;askAdmin()}};addEventListener('keydown',e=>{if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()=='a'){e.preventDefault();askAdmin()}});$('#q').oninput=()=>go('search');
 function go(v){view=v;$$('.nav').forEach(n=>n.classList.toggle('on',n.dataset.v==v));render()}
 function card(t,i,list){return `<div class="tr" style="animation-delay:${Math.min(i,12)*40}ms"><div class="cv" style="${t.cover?`background-image:url(${U(t,'cover')})`:''}">${t.cover?'':'♪'}<button class="pl" data-p="${t.id}">▶</button></div><button class="ad" data-a="${t.id}">＋</button><b>${esc(t.title)}</b><span>${esc(t.artist)}</span></div>`}
 function bind(list){$$('[data-p]').forEach(b=>b.onclick=()=>{queue=list.map(t=>t.id);play(queue.indexOf(+b.dataset.p))});$$('[data-a]').forEach(b=>b.onclick=()=>addTo(+b.dataset.a))}
