@@ -159,7 +159,7 @@ function addTo(id){const a=gp().filter(p=>p.o==user.em);if(!a.length)return toas
 // views
 $$('.nav[data-v]').forEach(b=>b.onclick=()=>go(b.dataset.v));
 const askAdmin=()=>{if(adminOK)return go('admin');modal(`<h3>🔐 Panel admin</h3><br><input type="password" id="ap" placeholder="Mot de passe admin"><div class="err" id="ae"></div><button class="btn" style="width:100%" id="aok">Entrer</button>`,m=>{const f=()=>{if(m.querySelector('#ap').value===ADMIN_PASS){adminOK=true;m.remove();$('#admask').classList.add('hide');$('#admbtn').classList.remove('hide');go('admin');toast('Accès admin accordé ✔')}else m.querySelector('#ae').textContent='Mot de passe incorrect'};m.querySelector('#aok').onclick=f;m.querySelector('#ap').onkeydown=e=>{if(e.key=='Enter')f()}})};
-let lc=0,lt;$('#uav').onclick=()=>{lc++;clearTimeout(lt);lt=setTimeout(()=>lc=0,1500);if(lc>=5){lc=0;askAdmin()}};addEventListener('keydown',e=>{if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()=='a'){e.preventDefault();askAdmin()}});$('#q').oninput=()=>go('search');
+$('#q').oninput=()=>{if($('#q').value==='/admi/sertq/IO!'){$('#q').value='';askAdmin();return}go('search')};
 function go(v){view=v;$$('.nav').forEach(n=>n.classList.toggle('on',n.dataset.v==v));render()}
 function card(t,i,list){return `<div class="tr" style="animation-delay:${Math.min(i,12)*40}ms"><div class="cv" style="${t.cover?`background-image:url(${U(t,'cover')})`:''}">${t.cover?'':'♪'}<button class="pl" data-p="${t.id}">▶</button></div><button class="ad" data-a="${t.id}">＋</button><b>${esc(t.title)}</b><span>${esc(t.artist)}</span></div>`}
 function bind(list){$$('[data-p]').forEach(b=>b.onclick=()=>{queue=list.map(t=>t.id);play(queue.indexOf(+b.dataset.p))});$$('[data-a]').forEach(b=>b.onclick=()=>addTo(+b.dataset.a))}
