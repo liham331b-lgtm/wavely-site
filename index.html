@@ -76,7 +76,7 @@ input[type=range]{accent-color:var(--a);width:100%;max-width:420px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px}
 .st{background:var(--p);border-radius:16px;padding:18px;border:1px solid #ffffff10}.st b{font-size:30px;display:block;background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}.st span{color:var(--m);font-size:13px}
 .panel{background:var(--p);border-radius:18px;padding:20px;margin-bottom:20px}
-.row{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff0d}.row .cv{width:44px;height:44px;font-size:16px;flex:none}.row div:nth-child(2){flex:1;min-width:0}
+.row{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff0d}.row .cv{width:44px;height:44px;font-size:16px;flex:none}.row div:nth-child(2){flex:1;min-width:0}$('#admask').onclick=()=>{$('#admask').onclick=()=>{$('#admask').onclick=()
 .fl{display:grid;grid-template-columns:1fr 1fr;gap:12px}.fl label{font-size:12px;color:var(--m);display:flex;flex-direction:column;gap:5px}
 input[type=file]{background:var(--p2);padding:9px;border-radius:10px;width:100%;font-size:13px}
 .modal{position:fixed;inset:0;background:#000b;z-index:500;display:grid;place-items:center;padding:16px;animation:fi .2s}
@@ -102,7 +102,7 @@ input[type=file]{background:var(--p2);padding:9px;border-radius:10px;width:100%;
 <div id="app" class="hide">
 <aside class="side"><div class="name">WAVELY</div>
 <button class="nav on" data-v="home">🏠 Accueil</button><button class="nav" data-v="search">🔍 Recherche</button><button class="nav hide" id="admbtn" data-v="admin">⚙️ Admin</button>
-<button class="nav" id="admask">🔐 Admin</button>
+<button class="nav hide" id="admask">🔐 Admin</button>
 <h4>PLAYLISTS <button id="newpl">+</button></h4><div id="pls"></div>
 <button class="nav" id="out" style="margin-top:auto">🚪 Déconnexion</button></aside>
 <main><div class="top"><input type="text" id="q" placeholder="🔍 Rechercher un titre, un artiste…"><div class="user"><span id="uname"></span><b id="uav"></b></div></div><div id="view"></div></main>
